@@ -1,0 +1,263 @@
+<!-- 
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rezerwacja Tachograf</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>Dagmara Kurek</h1>
+    <p>Kontakt: +48 788 874 147 | Email: daga.kurek@gmail.com</p>
+  </header>
+
+  <div class="container">
+    <h2>Rezerwacja Tachograf – Wybierz Miesiąc i Lokalizację</h2>
+
+    <label>Wybierz miesiąc:</label>
+    <select id="miesiac"></select>
+
+    <label>Wybierz miasto:</label>
+    <select id="miasto">
+      <option value="oswiecim">Oświęcim</option>
+      <option value="katowice">Katowice</option>
+      <option value="krakow">Kraków</option>
+    </select>
+
+    <div class="opcje" id="opcje"></div>
+
+    <div id="formularz">
+      <h3>Podaj swoje dane</h3>
+      <input type="text" id="imie" placeholder="Imię">
+      <input type="text" id="nazwisko" placeholder="Nazwisko">
+      <input type="email" id="email" placeholder="Email">
+      <input type="tel" id="telefon" placeholder="Numer telefonu">
+      <button onclick="wyslijDane()">Wyślij</button>
+    </div>
+
+    <p id="potwierdzenie" class="potwierdzenie"></p>
+  </div>
+
+  <footer><p>Website-maker: Patryk Nowak</p></footer> 
+
+  <script>
+    let wybraneMiasto = "";
+    let wybranaData = "";
+
+    const opcjeDiv = document.getElementById("opcje");
+    const miesiacSelect = document.getElementById("miesiac");
+
+    function generujNajblizszeMiesiace() {
+      const dzis = new Date();
+      for (let i = 0; i < 3; i++) {
+        const data = new Date(dzis.getFullYear(), dzis.getMonth() + i, 1);
+        const miesiac = data.toLocaleString('pl-PL', { month: 'long' });
+        const option = document.createElement("option");
+        option.value = `${data.getFullYear()}-${data.getMonth()+1}`;
+        option.textContent = miesiac.charAt(0).toUpperCase() + miesiac.slice(1) + " " + data.getFullYear();
+        miesiacSelect.appendChild(option);
+      }
+    }
+
+    function generujDaty(miesiac) {
+      const [rok, m] = miesiac.split('-').map(Number);
+      let daty = [];
+      for (let i = 1; i <= 4; i++) {
+        const d = new Date(rok, m - 1, i * 7);
+        daty.push(d.toISOString().split('T')[0]);
+      }
+      return daty;
+    }
+
+    function pobierzOpcje() {
+      const miasto = document.getElementById("miasto").value;
+      const miesiac = miesiacSelect.value;
+
+      opcjeDiv.innerHTML = "";
+      const daty = generujDaty(miesiac);
+
+      daty.forEach((data, index) => {
+        const div = document.createElement("div");
+        div.className = "Opcja";
+        div.innerHTML = `<strong>Spotkanie ${index + 1}</strong><br>Data: ${data}<br><br><button onclick=\"otworzFormularz('${miasto}','${data}')\">Zapisz się</button> <hr>`;
+        opcjeDiv.appendChild(div);
+      });
+    }
+
+    function otworzFormularz(miasto, data) {
+      wybraneMiasto = miasto;
+      wybranaData = data;
+      const f = document.getElementById("formularz");
+      f.style.display = "block";
+      setTimeout(() => {
+        f.style.opacity = "1";
+        f.style.transform = "translateY(0)";
+      }, 10);
+      f.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('potwierdzenie').innerText = "";
+    }
+
+    function wyslijDane() {
+      const imie = document.getElementById("imie").value;
+      const nazwisko = document.getElementById("nazwisko").value;
+      const email = document.getElementById("email").value;
+      const telefon = document.getElementById("telefon").value;
+
+      if (!imie || !nazwisko || !email || !telefon) {
+        alert("Wypełnij wszystkie pola!");
+        return;
+      }
+
+      const nazwy = { oswiecim: "Oświęcim", katowice: "Katowice", krakow: "Kraków" };
+
+      document.getElementById('potwierdzenie').innerText = `Zapis dokonany! ${imie} ${nazwisko}, spotkanie w ${nazwy[wybraneMiasto]} dnia ${wybranaData}.`;
+
+      const f = document.getElementById("formularz");
+      f.style.opacity = "0";
+      f.style.transform = "translateY(25px)";
+      setTimeout(() => { f.style.display = "none"; }, 300);
+    }
+
+    miesiacSelect.addEventListener('change', pobierzOpcje);
+    document.getElementById("miasto").addEventListener('change', pobierzOpcje);
+
+    generujNajblizszeMiesiace();
+    pobierzOpcje();
+  </script>
+</body>
+</html> 
+-->
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rezerwacja Tachograf</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>Dagmara Kurek</h1>
+    <p>Kontakt: +48 788 874 147 | Email: daga.kurek@gmail.com</p>
+  </header>
+
+  <div class="container">
+    <h2>Rezerwacja Tachograf – Wybierz Miesiąc i Lokalizację</h2>
+
+    <label>Wybierz miesiąc:</label>
+    <select id="miesiac"></select>
+
+    <label>Wybierz miasto:</label>
+    <select id="miasto">
+      <option value="oswiecim">Oświęcim</option>
+      <option value="katowice">Katowice</option>
+      <option value="krakow">Kraków</option>
+    </select>
+
+    <div class="opcje" id="opcje"></div>
+
+    <div id="formularz">
+      <h3>Podaj swoje dane</h3>
+      <input type="text" id="imie" placeholder="Imię">
+      <input type="text" id="nazwisko" placeholder="Nazwisko">
+      <input type="email" id="email" placeholder="Email">
+      <input type="tel" id="telefon" placeholder="Numer telefonu">
+      <button onclick="wyslijDane()">Wyślij</button>
+    </div>
+
+    <p id="potwierdzenie" class="potwierdzenie"></p>
+  </div>
+
+  <script>
+    let wybraneMiasto = "";
+    let wybranaData = "";
+
+    const opcjeDiv = document.getElementById("opcje");
+    const miesiacSelect = document.getElementById("miesiac");
+
+    function generujNajblizszeMiesiace() {
+      const dzis = new Date();
+      for (let i = 0; i < 3; i++) {
+        const data = new Date(dzis.getFullYear(), dzis.getMonth() + i, 1);
+        const miesiac = data.toLocaleString('pl-PL', { month: 'long' });
+        const option = document.createElement("option");
+        option.value = `${data.getFullYear()}-${data.getMonth()+1}`;
+        option.textContent = miesiac.charAt(0).toUpperCase() + miesiac.slice(1) + " " + data.getFullYear();
+        miesiacSelect.appendChild(option);
+      }
+    }
+
+    function generujDaty(miesiac) {
+      const [rok, m] = miesiac.split('-').map(Number);
+      let daty = [];
+      for (let i = 1; i <= 4; i++) {
+        const d = new Date(rok, m - 1, i * 7);
+        daty.push(d.toISOString().split('T')[0]);
+      }
+      return daty;
+    }
+
+    function pobierzOpcje() {
+      const miasto = document.getElementById("miasto").value;
+      const miesiac = miesiacSelect.value;
+
+      opcjeDiv.innerHTML = "";
+      const daty = generujDaty(miesiac);
+
+      daty.forEach((data, index) => {
+        const div = document.createElement("div");
+        div.className = "opcja";
+        div.innerHTML = `<strong>Spotkanie ${index + 1}</strong><br>Data: ${data}<br><br><button onclick=\"otworzFormularz('${miasto}','${data}')\">Zapisz się</button><hr>`;
+        opcjeDiv.appendChild(div);
+      });
+    }
+
+    function otworzFormularz(miasto, data) {
+      wybraneMiasto = miasto;
+      wybranaData = data;
+      const f = document.getElementById("formularz");
+      f.style.display = "block";
+      setTimeout(() => {
+        f.style.opacity = "1";
+        f.style.transform = "translateY(0)";
+      }, 10);
+      f.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('potwierdzenie').innerText = "";
+    }
+
+    function wyslijDane() {
+      const imie = document.getElementById("imie").value;
+      const nazwisko = document.getElementById("nazwisko").value;
+      const email = document.getElementById("email").value;
+      const telefon = document.getElementById("telefon").value;
+
+      if (!imie || !nazwisko || !email || !telefon) {
+        alert("Wypełnij wszystkie pola!");
+        return;
+      }
+
+      const nazwy = { oswiecim: "Oświęcim", katowice: "Katowice", krakow: "Kraków" };
+
+      // Save data locally (can later be replaced with API call)
+      let zapisy = JSON.parse(localStorage.getItem('zapisy')) || [];
+      zapisy.push({ imie, nazwisko, email, telefon, miasto: wybraneMiasto, data: wybranaData });
+      localStorage.setItem('zapisy', JSON.stringify(zapisy));
+
+      document.getElementById('potwierdzenie').innerText = `Zapis dokonany! ${imie} ${nazwisko}, spotkanie w ${nazwy[wybraneMiasto]} dnia ${wybranaData}.`;
+
+      const f = document.getElementById("formularz");
+      f.style.opacity = "0";
+      f.style.transform = "translateY(25px)";
+      setTimeout(() => { f.style.display = "none"; }, 300);
+    }
+
+    miesiacSelect.addEventListener('change', pobierzOpcje);
+    document.getElementById("miasto").addEventListener('change', pobierzOpcje);
+
+    generujNajblizszeMiesiace();
+    pobierzOpcje();
+  </script>
+</body>
+</html>
