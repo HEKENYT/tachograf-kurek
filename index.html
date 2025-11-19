@@ -1000,7 +1000,7 @@ pobierzOpcje();
 </script>
 </body>
 </html> -->
-
+<!-- 
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1154,5 +1154,120 @@ pobierzOpcje();
 </html>
 
 
+ -->
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rezerwacja Tachograf</title>
+<style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 20px;
+  background: #1e1e1e;
+  color: #f0f0f0;
+}
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: #2e2e2e;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+}
+input {
+  background: #3c3c3c;
+  color: #f9f9f9;
+}
+button {
+  background: #00aaff;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+}
+button:hover {
+  background: #00d4ff;
+}
+#potwierdzenie {
+  margin-top: 15px;
+  color: #00ffcc;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Rezerwacja Tachograf</h2>
+<form id="formularz" onsubmit="return wyslijDane();">
+  <input type="text" id="imie" placeholder="Imię" required>
+  <input type="text" id="nazwisko" placeholder="Nazwisko" required>
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="tel" id="telefon" placeholder="Telefon" required>
+  <button type="submit">Wyślij</button>
+</form>
+<p id="potwierdzenie"></p>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+// 🔹 TU WSTAW SWOJĄ KONFIGURACJĘ Z FIREBASE
+const firebaseConfig = {
+  apiKey: "TWÓJ_FIREBASE_API_KEY",
+  authDomain: "twoj-projekt.firebaseapp.com",
+  databaseURL: "https://twoj-projekt-default-rtdb.firebaseio.com",
+  projectId: "twoj-projekt",
+  storageBucket: "twoj-projekt.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef123456"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.zapiszDoBazy = function(dane) {
+  const zapisyRef = ref(db, 'zapisy');
+  push(zapisyRef, dane);
+}
+
+async function wyslijDane() {
+  const imie = document.getElementById("imie").value;
+  const nazwisko = document.getElementById("nazwisko").value;
+  const email = document.getElementById("email").value;
+  const telefon = document.getElementById("telefon").value;
+
+  const dane = {
+    Imię: imie,
+    Nazwisko: nazwisko,
+    Email: email,
+    Telefon: telefon,
+    Miasto: "Oświęcim",
+    Data: new Date().toISOString().split('T')[0]
+  };
+
+  try {
+    window.zapiszDoBazy(dane);
+    document.getElementById('potwierdzenie').innerText = `Zapisano: ${imie} ${nazwisko}`;
+    document.getElementById("formularz").reset();
+  } catch(err) {
+    alert("Błąd zapisu: " + err.message);
+  }
+
+  return false;
+}
+</script>
+</body>
+</html>
 
 
