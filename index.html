@@ -1491,11 +1491,6 @@ button:hover {
   transition: all 0.5s ease;
   border-left: 4px solid #00d4ff;
 }
-.potwierdzenie {
-  margin-top: 25px;
-  font-weight: bold;
-  color: #00ffcc;
-} 
 </style>
 </head>
 <body>
@@ -1521,42 +1516,17 @@ button:hover {
 
 <div id="formularz">
   <h3>Podaj swoje dane</h3>
-  <input type="text" id="imie" placeholder="Imię" required>
-  <input type="text" id="nazwisko" placeholder="Nazwisko" required>
-  <input type="email" id="email" placeholder="Email" required>
-  <input type="tel" id="telefon" placeholder="Numer telefonu" required>
-  <button id="wyslijBtn">Wyślij</button>
+  <input type="text" id="imie" placeholder="Imię">
+  <input type="text" id="nazwisko" placeholder="Nazwisko">
+  <input type="email" id="email" placeholder="Email">
+  <input type="tel" id="telefon" placeholder="Numer telefonu">
+  <button onclick="alert('Tutaj możesz dodać wysyłanie do bazy')">Wyślij</button>
+</div>
 </div>
 
-<p id="potwierdzenie" class="potwierdzenie"></p>
-</div>
-
-<!-- Firebase SDK -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-
-// 🔹 Wstaw swoją konfigurację Firebase poniżej
-const firebaseConfig = {
-  apiKey: "TWÓJ_FIREBASE_API_KEY",
-  authDomain: "twoj-projekt.firebaseapp.com",
-  databaseURL: "https://twoj-projekt-default-rtdb.firebaseio.com",
-  projectId: "twoj-projekt",
-  storageBucket: "twoj-projekt.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef123456"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-let wybraneMiasto = "";
-let wybranaData = "";
-
+<script>
 const opcjeDiv = document.getElementById("opcje");
 const miesiacSelect = document.getElementById("miesiac");
-const formularz = document.getElementById("formularz");
-const wyslijBtn = document.getElementById("wyslijBtn");
 
 function generujNajblizszeMiesiace() {
   const dzis = new Date();
@@ -1591,67 +1561,23 @@ function pobierzOpcje() {
     const div = document.createElement("div");
     div.className = "opcja";
 
-    div.innerHTML = `<strong>Spotkanie ${index + 1}</strong><br>Data: ${data}<br><br>`;
-
     const btn = document.createElement("button");
     btn.textContent = "Zapisz się";
     btn.addEventListener("click", () => {
-      otworzFormularz(miasto, data);
+      document.getElementById("formularz").style.display = "block";
+      setTimeout(() => {
+        document.getElementById("formularz").style.opacity = "1";
+        document.getElementById("formularz").style.transform = "translateY(0)";
+      }, 10);
+      document.getElementById("formularz").scrollIntoView({ behavior: 'smooth' });
     });
 
+    div.innerHTML = `<strong>Spotkanie ${index + 1}</strong><br>Data: ${data}<br><br>`;
     div.appendChild(btn);
     div.innerHTML += "<hr>";
-
     opcjeDiv.appendChild(div);
   });
 }
-
-function otworzFormularz(miasto, data) {
-  wybraneMiasto = miasto;
-  wybranaData = data;
-  formularz.style.display = "block";
-  setTimeout(() => {
-    formularz.style.opacity = "1";
-    formularz.style.transform = "translateY(0)";
-  }, 10);
-  formularz.scrollIntoView({ behavior: 'smooth' });
-  document.getElementById('potwierdzenie').innerText = "";
-}
-
-wyslijBtn.addEventListener("click", () => {
-  const imie = document.getElementById("imie").value;
-  const nazwisko = document.getElementById("nazwisko").value;
-  const email = document.getElementById("email").value;
-  const telefon = document.getElementById("telefon").value;
-
-  if (!imie || !nazwisko || !email || !telefon) {
-    alert("Wypełnij wszystkie pola!");
-    return;
-  }
-
-  const dane = {
-    Imię: imie,
-    Nazwisko: nazwisko,
-    Email: email,
-    Telefon: telefon,
-    Miasto: wybraneMiasto,
-    Data: wybranaData
-  };
-
-  try {
-    const zapisyRef = ref(db, 'zapisy');
-    push(zapisyRef, dane);
-    document.getElementById('potwierdzenie').innerText = 
-      `Zapisano! ${imie} ${nazwisko}, spotkanie w ${wybraneMiasto} dnia ${wybranaData}.`;
-
-    formularz.style.opacity = "0";
-    formularz.style.transform = "translateY(25px)";
-    setTimeout(() => { formularz.style.display = "none"; }, 300);
-    formularz.reset();
-  } catch(err) {
-    alert("Błąd zapisu: " + err.message);
-  }
-});
 
 miesiacSelect.addEventListener('change', pobierzOpcje);
 document.getElementById("miasto").addEventListener('change', pobierzOpcje);
@@ -1661,7 +1587,6 @@ pobierzOpcje();
 </script>
 </body>
 </html>
-
 
 
 
