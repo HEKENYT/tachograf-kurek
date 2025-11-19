@@ -844,7 +844,7 @@ pobierzOpcje();
 </html> -->
 
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
@@ -999,5 +999,156 @@ generujNajblizszeMiesiace();
 pobierzOpcje();
 </script>
 </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rezerwacja Tachograf</title>
+<style>
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:20px; background:#1e1e1e; color:#f0f0f0; }
+.header { background:#222; color:#fff; padding:20px; border-radius:10px; text-align:center; margin-bottom:25px; font-weight:bold; }
+.container { max-width:750px; margin:auto; background:#2e2e2e; padding:25px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.5); }
+select, input, button { width:100%; padding:14px; margin:12px 0; border-radius:8px; border:1px solid #777; background:#3c3c3c; color:#f9f9f9; }
+select:focus, input:focus { outline:none; border-color:#00d4ff; box-shadow:0 0 10px #00d4ff; }
+.opcje .opcja { background:#3b3b3b; padding:20px; margin-bottom:15px; border-radius:12px; transition: transform 0.3s ease, background 0.3s, box-shadow 0.3s; cursor:pointer; border-left:4px solid #00d4ff; }
+.opcje .opcja:hover { transform:translateX(5px); background:#4a4a4a; box-shadow:0 5px 15px rgba(0,0,0,0.6); }
+button { cursor:pointer; }
+.potwierdzenie { margin-top:15px; font-weight:bold; color:#00ffcc; }
+</style>
+</head>
+<body>
+<header class="header">
+<h1>Dagmara Kurek</h1>
+<p>Kontakt: +48 788 874 147 | Email: daga.kurek@gmail.com</p>
+</header>
+
+<div class="container">
+<h2>Rezerwacja Tachograf – Wybierz Miesiąc i Lokalizację</h2>
+
+<label>Wybierz miesiąc:</label>
+<select id="miesiac"></select>
+
+<label>Wybierz miasto:</label>
+<select id="miasto">
+<option value="Oświęcim">Oświęcim</option>
+<option value="Katowice">Katowice</option>
+<option value="Kraków">Kraków</option>
+</select>
+
+<div class="opcje" id="opcje"></div>
+
+<div id="formularz" style="display:none;">
+<h3>Podaj swoje dane</h3>
+<input type="text" id="imie" placeholder="Imię">
+<input type="text" id="nazwisko" placeholder="Nazwisko">
+<input type="email" id="email" placeholder="Email">
+<input type="tel" id="telefon" placeholder="Telefon">
+<button onclick="wyslijDane()">Wyślij</button>
+</div>
+
+<p id="potwierdzenie" class="potwierdzenie"></p>
+</div>
+
+<script>
+let wybraneMiasto = "";
+let wybranaData = "";
+
+const miesiacSelect = document.getElementById("miesiac");
+const opcjeDiv = document.getElementById("opcje");
+
+// Wstaw swój Webhook URL
+const WEBHOOK_URL = "https://hooks.airtable.com/workflows/v1/genericWebhook/appBshLRfglJP6rb4/wflrhIL3Dza4Qo2gP/wtrVdIAi36JayJhkt";
+
+function generujNajblizszeMiesiace() {
+  const dzis = new Date();
+  for(let i=0;i<3;i++){
+    const data = new Date(dzis.getFullYear(), dzis.getMonth()+i,1);
+    const miesiac = data.toLocaleString('pl-PL',{month:'long'});
+    const option = document.createElement("option");
+    option.value = `${data.getFullYear()}-${data.getMonth()+1}`;
+    option.textContent = miesiac.charAt(0).toUpperCase()+miesiac.slice(1)+" "+data.getFullYear();
+    miesiacSelect.appendChild(option);
+  }
+}
+
+function generujDaty(miesiac){
+  const [rok,m] = miesiac.split('-').map(Number);
+  let daty=[];
+  for(let i=1;i<=4;i++){
+    const d=new Date(rok,m-1,i*7);
+    daty.push(d.toISOString().split('T')[0]);
+  }
+  return daty;
+}
+
+function pobierzOpcje(){
+  const miasto=document.getElementById("miasto").value;
+  const miesiac=miesiacSelect.value;
+  opcjeDiv.innerHTML="";
+  const daty=generujDaty(miesiac);
+
+  daty.forEach((data,index)=>{
+    const div=document.createElement("div");
+    div.className="opcja";
+    div.innerHTML=`<strong>Spotkanie ${index+1}</strong><br>Data: ${data}<br><br>
+                   <button onclick="otworzFormularz('${miasto}','${data}')">Zapisz się</button><hr>`;
+    opcjeDiv.appendChild(div);
+  });
+}
+
+function otworzFormularz(miasto,data){
+  wybraneMiasto=miasto;
+  wybranaData=data;
+  document.getElementById("formularz").style.display="block";
+  document.getElementById("formularz").scrollIntoView({behavior:'smooth'});
+  document.getElementById('potwierdzenie').innerText="";
+}
+
+async function wyslijDane(){
+  const imie=document.getElementById("imie").value;
+  const nazwisko=document.getElementById("nazwisko").value;
+  const email=document.getElementById("email").value;
+  const telefon=document.getElementById("telefon").value;
+
+  if(!imie||!nazwisko||!email||!telefon){ alert("Wypełnij wszystkie pola!"); return; }
+
+  try {
+    const response = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        Imię: imie,
+        Nazwisko: nazwisko,
+        Email: email,
+        Telefon: telefon,
+        Miasto: wybraneMiasto,
+        Data: wybranaData
+      })
+    });
+
+    if (response.ok) {
+      document.getElementById('potwierdzenie').innerText =
+        `Zapis dokonany! ${imie} ${nazwisko}, spotkanie w ${wybraneMiasto} dnia ${wybranaData}.`;
+      document.getElementById("formularz").style.display = "none";
+    } else {
+      alert("Błąd wysyłki do Airtable");
+    }
+  } catch(err) {
+    alert("Błąd połączenia: " + err.message);
+  }
+}
+
+miesiacSelect.addEventListener('change',pobierzOpcje);
+document.getElementById("miasto").addEventListener('change',pobierzOpcje);
+
+generujNajblizszeMiesiace();
+pobierzOpcje();
+</script>
+</body>
 </html>
+
+
 
