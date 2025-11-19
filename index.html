@@ -1107,16 +1107,19 @@ function otworzFormularz(miasto,data){
   document.getElementById('potwierdzenie').innerText="";
 }
 
-async function wyslijDane(){
-  const imie=document.getElementById("imie").value;
-  const nazwisko=document.getElementById("nazwisko").value;
-  const email=document.getElementById("email").value;
-  const telefon=document.getElementById("telefon").value;
+async function wyslijDane() {
+  const imie = document.getElementById("imie").value;
+  const nazwisko = document.getElementById("nazwisko").value;
+  const email = document.getElementById("email").value;
+  const telefon = document.getElementById("telefon").value;
 
-  if(!imie||!nazwisko||!email||!telefon){ alert("Wypełnij wszystkie pola!"); return; }
+  if (!imie || !nazwisko || !email || !telefon) {
+    alert("Wypełnij wszystkie pola!");
+    return;
+  }
 
   try {
-    const response = await fetch(WEBHOOK_URL, {
+    const response = await fetch("/api/zapisz", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -1129,18 +1132,18 @@ async function wyslijDane(){
       })
     });
 
-    if (response.ok) {
+    const data = await response.json();
+    if (data.success) {
       document.getElementById('potwierdzenie').innerText =
         `Zapis dokonany! ${imie} ${nazwisko}, spotkanie w ${wybraneMiasto} dnia ${wybranaData}.`;
       document.getElementById("formularz").style.display = "none";
     } else {
-      alert("Błąd wysyłki do Airtable");
+      alert("Błąd zapisu: " + (data.error || "Nieznany błąd"));
     }
-  } catch(err) {
+  } catch (err) {
     alert("Błąd połączenia: " + err.message);
   }
 }
-
 miesiacSelect.addEventListener('change',pobierzOpcje);
 document.getElementById("miasto").addEventListener('change',pobierzOpcje);
 
@@ -1149,6 +1152,7 @@ pobierzOpcje();
 </script>
 </body>
 </html>
+
 
 
 
