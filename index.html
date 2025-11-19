@@ -117,6 +117,44 @@ footer{
     border-radius: 15px;
     float: left;}
     </style>
+
+<script type="module">
+  // Import Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+  import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
+
+  // Twoja konfiguracja
+  const firebaseConfig = {
+    apiKey: "AIzaSyCelCGEbx0cvExHrgGQHJlHLOtnejV9WbE",
+    authDomain: "tachograf-fa8bd.firebaseapp.com",
+    databaseURL: "https://tachograf-fa8bd-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "tachograf-fa8bd",
+    storageBucket: "tachograf-fa8bd.firebasestorage.app",
+    messagingSenderId: "136245693098",
+    appId: "1:136245693098:web:d9cbf6411424612e981ed3"
+  };
+
+  // Inicjalizacja Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Funkcja wysyłania danych
+  window.wyslijDaneFirebase = function(imie, nazwisko, email, telefon, miasto, data) {
+    push(ref(db, 'zapisy/'), {
+      Imie: imie,
+      Nazwisko: nazwisko,
+      Email: email,
+      Telefon: telefon,
+      Miasto: miasto,
+      Data: data
+    }).then(() => {
+      alert("Zapisane w Firebase!");
+    }).catch(err => {
+      alert("Błąd zapisu: " + err);
+    });
+  };
+</script>
+  
 </head>
 <body>
   <header class="header">
@@ -263,3 +301,4 @@ async function wyslijDane() {
   </script>
 </body>
 </html>
+
