@@ -5,6 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rezerwacja Tachograf</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f4f4f4;
+    }
+    .header {
+      background:#313131;
+      color:white;
+      padding:15px;
+      border-radius:8px;
+      margin-bottom:20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .opcje {
+      margin-top: 20px;
+    }
+    .opcja {
+      background: #eef;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      transition: transform 0.3s ease, background 0.3s;
+    }
+    .opcja:hover {
+      transform: translateX(5px);
+      background: #e0eaff;
+    }
+    button {
+      padding: 10px 20px;
+      background: #0055ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.2s ease, background 0.3s;
+    }
+    button:hover {
+      background: #189249;
+      transform: scale(1.05);
+    }
+    #formularz {
+      display: none;
+      margin-top: 20px;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+    }
+    #potwierdzenie {
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
 </head>
 <body>
   <header class="header">
@@ -20,9 +93,9 @@
 
     <label>Wybierz miasto:</label>
     <select id="miasto">
-      <option value="oswiecim">Oświęcim</option>
-      <option value="katowice">Katowice</option>
-      <option value="krakow">Kraków</option>
+      <option value="Oświęcim">Oświęcim</option>
+      <option value="Katowice">Katowice</option>
+      <option value="Kraków">Kraków</option>
     </select>
 
     <div class="opcje" id="opcje"></div>
@@ -78,7 +151,8 @@
       daty.forEach((data, index) => {
         const div = document.createElement("div");
         div.className = "opcja";
-        div.innerHTML = `<strong>Spotkanie ${index + 1}</strong><br>Data: ${data}<br><br><button onclick=\"otworzFormularz('${miasto}','${data}')\">Zapisz się</button><hr>`;
+        div.innerHTML = `<strong>Spotkanie ${index + 1}</strong><br>Data: ${data}<br><br>
+                         <button onclick="otworzFormularz('${miasto}','${data}')">Zapisz się</button><hr>`;
         opcjeDiv.appendChild(div);
       });
     }
@@ -96,7 +170,7 @@
       document.getElementById('potwierdzenie').innerText = "";
     }
 
-    function wyslijDane() {
+    async function wyslijDane() {
       const imie = document.getElementById("imie").value;
       const nazwisko = document.getElementById("nazwisko").value;
       const email = document.getElementById("email").value;
@@ -107,19 +181,39 @@
         return;
       }
 
-      const nazwy = { oswiecim: "Oświęcim", katowice: "Katowice", krakow: "Kraków" };
+      const AIRTABLE_BASE_ID = "appBshLRfglJP6rb4";  // Twój Base ID
+      const AIRTABLE_API_KEY = "patVPO9Au25D1pY7U.0f51a718158213d3b6a16ee0094b338b72668e1d6f39bf0eb0aed8a7dd22ef60";     // Wklej tu swój Personal Access Token
 
-      // Save data locally (can later be replaced with API call)
-      let zapisy = JSON.parse(localStorage.getItem('zapisy')) || [];
-      zapisy.push({ imie, nazwisko, email, telefon, miasto: wybraneMiasto, data: wybranaData });
-      localStorage.setItem('zapisy', JSON.stringify(zapisy));
+      const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/zapisy`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${AIRTABLE_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fields: {
+            Imię: imie,
+            Nazwisko: nazwisko,
+            Email: email,
+            Telefon: telefon,
+            Miasto: wybraneMiasto,
+            Data: wybranaData
+          }
+        })
+      });
 
-      document.getElementById('potwierdzenie').innerText = `Zapis dokonany! ${imie} ${nazwisko}, spotkanie w ${nazwy[wybraneMiasto]} dnia ${wybranaData}.`;
+      if (response.ok) {
+        document.getElementById('potwierdzenie').innerText = 
+          `Zapis dokonany! ${imie} ${nazwisko}, spotkanie w ${wybraneMiasto} dnia ${wybranaData}.`;
 
-      const f = document.getElementById("formularz");
-      f.style.opacity = "0";
-      f.style.transform = "translateY(25px)";
-      setTimeout(() => { f.style.display = "none"; }, 300);
+        const f = document.getElementById("formularz");
+        f.style.opacity = "0";
+        f.style.transform = "translateY(25px)";
+        setTimeout(() => { f.style.display = "none"; }, 300);
+      } else {
+        alert("Błąd zapisu do bazy Airtable.");
+        console.error(await response.text());
+      }
     }
 
     miesiacSelect.addEventListener('change', pobierzOpcje);
@@ -130,4 +224,3 @@
   </script>
 </body>
 </html>
-
