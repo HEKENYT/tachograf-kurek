@@ -1,6 +1,6 @@
 
 
-body {
+/* body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 20px;
   background: #1e1e1e;
@@ -111,9 +111,9 @@ footer{
     font-size: 10px;
     border-radius: 15px;
     float: left;
-}
+} */
 
-/* body {
+body {
       font-family: Arial, sans-serif;
       margin: 20px;
       background: #f4f4f4;
@@ -183,4 +183,4 @@ footer{
       margin-top: 10px;
       font-weight: bold;
       color: green;
-    } */
+    } 
