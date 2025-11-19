@@ -1155,7 +1155,7 @@ pobierzOpcje();
 
 
  -->
-
+<!-- 
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1218,7 +1218,7 @@ button:hover {
 </div>
 
 <!-- Firebase SDK -->
-<script type="module">
+<!-- <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
@@ -1266,6 +1266,255 @@ async function wyslijDane() {
 
   return false;
 }
+</script>
+</body>
+</html>  -->
+
+
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rezerwacja Tachograf</title>
+<style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 20px;
+  background: #1e1e1e;
+  color: #f0f0f0;
+}
+.header {
+  background: #222;
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+.container {
+  max-width: 750px;
+  margin: auto;
+  background: #2e2e2e;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+select, input {
+  width: 100%;
+  padding: 14px;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: 1px solid #777;
+  background: #3c3c3c;
+  color: #f9f9f9;
+}
+select:focus, input:focus {
+  outline: none;
+  border-color: #00d4ff;
+  box-shadow: 0 0 10px #00d4ff;
+}
+.opcje { margin-top: 25px; }
+.opcja {
+  background: #3b3b3b;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  transition: transform 0.3s ease, background 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  border-left: 4px solid #00d4ff;
+}
+.opcja:hover {
+  transform: translateX(5px);
+  background: #4a4a4a;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+}
+button {
+  padding: 14px 30px;
+  background: #00aaff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  transition: transform 0.2s ease, background 0.3s, box-shadow 0.3s;
+}
+button:hover {
+  transform: scale(1.05);
+  background: #00d4ff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.7);
+}
+#formularz {
+  display: none;
+  margin-top: 25px;
+  background: #3a3a3a;
+  padding: 30px;
+  border-radius: 15px;
+  opacity: 0;
+  transform: translateY(25px);
+  transition: all 0.5s ease;
+  border-left: 4px solid #00d4ff;
+}
+.potwierdzenie {
+  margin-top: 25px;
+  font-weight: bold;
+  color: #00ffcc;
+} 
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>Dagmara Kurek</h1>
+  <p>Kontakt: +48 788 874 147 | Email: daga.kurek@gmail.com</p>
+</header>
+
+<div class="container">
+<h2>Rezerwacja Tachograf – Wybierz Miesiąc i Lokalizację</h2>
+
+<label>Wybierz miesiąc:</label>
+<select id="miesiac"></select>
+
+<label>Wybierz miasto:</label>
+<select id="miasto">
+  <option value="Oświęcim">Oświęcim</option>
+  <option value="Katowice">Katowice</option>
+  <option value="Kraków">Kraków</option>
+</select>
+
+<div class="opcje" id="opcje"></div>
+
+<div id="formularz">
+  <h3>Podaj swoje dane</h3>
+  <input type="text" id="imie" placeholder="Imię" required>
+  <input type="text" id="nazwisko" placeholder="Nazwisko" required>
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="tel" id="telefon" placeholder="Numer telefonu" required>
+  <button onclick="wyslijDane()">Wyślij</button>
+</div>
+
+<p id="potwierdzenie" class="potwierdzenie"></p>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+// 🔹 Wstaw swoją konfigurację Firebase poniżej
+const firebaseConfig = {
+  apiKey: "TWÓJ_FIREBASE_API_KEY",
+  authDomain: "twoj-projekt.firebaseapp.com",
+  databaseURL: "https://twoj-projekt-default-rtdb.firebaseio.com",
+  projectId: "twoj-projekt",
+  storageBucket: "twoj-projekt.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef123456"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let wybraneMiasto = "";
+let wybranaData = "";
+
+const opcjeDiv = document.getElementById("opcje");
+const miesiacSelect = document.getElementById("miesiac");
+
+function generujNajblizszeMiesiace() {
+  const dzis = new Date();
+  for (let i = 0; i < 3; i++) {
+    const data = new Date(dzis.getFullYear(), dzis.getMonth() + i, 1);
+    const miesiac = data.toLocaleString('pl-PL', { month: 'long' });
+    const option = document.createElement("option");
+    option.value = `${data.getFullYear()}-${data.getMonth()+1}`;
+    option.textContent = miesiac.charAt(0).toUpperCase() + miesiac.slice(1) + " " + data.getFullYear();
+    miesiacSelect.appendChild(option);
+  }
+}
+
+function generujDaty(miesiac) {
+  const [rok, m] = miesiac.split('-').map(Number);
+  let daty = [];
+  for (let i = 1; i <= 4; i++) {
+    const d = new Date(rok, m - 1, i * 7);
+    daty.push(d.toISOString().split('T')[0]);
+  }
+  return daty;
+}
+
+function pobierzOpcje() {
+  const miasto = document.getElementById("miasto").value;
+  const miesiac = miesiacSelect.value;
+
+  opcjeDiv.innerHTML = "";
+  const daty = generujDaty(miesiac);
+
+  daty.forEach((data, index) => {
+    const div = document.createElement("div");
+    div.className = "opcja";
+    div.innerHTML = `<strong>Spotkanie ${index + 1}</strong><br>Data: ${data}<br><br>
+                     <button onclick="otworzFormularz('${miasto}','${data}')">Zapisz się</button><hr>`;
+    opcjeDiv.appendChild(div);
+  });
+}
+
+function otworzFormularz(miasto, data) {
+  wybraneMiasto = miasto;
+  wybranaData = data;
+  const f = document.getElementById("formularz");
+  f.style.display = "block";
+  setTimeout(() => {
+    f.style.opacity = "1";
+    f.style.transform = "translateY(0)";
+  }, 10);
+  f.scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('potwierdzenie').innerText = "";
+}
+
+function wyslijDane() {
+  const imie = document.getElementById("imie").value;
+  const nazwisko = document.getElementById("nazwisko").value;
+  const email = document.getElementById("email").value;
+  const telefon = document.getElementById("telefon").value;
+
+  if (!imie || !nazwisko || !email || !telefon) {
+    alert("Wypełnij wszystkie pola!");
+    return;
+  }
+
+  const dane = {
+    Imię: imie,
+    Nazwisko: nazwisko,
+    Email: email,
+    Telefon: telefon,
+    Miasto: wybraneMiasto,
+    Data: wybranaData
+  };
+
+  try {
+    const zapisyRef = ref(db, 'zapisy');
+    push(zapisyRef, dane);
+    document.getElementById('potwierdzenie').innerText = 
+      `Zapisano! ${imie} ${nazwisko}, spotkanie w ${wybraneMiasto} dnia ${wybranaData}.`;
+
+    const f = document.getElementById("formularz");
+    f.style.opacity = "0";
+    f.style.transform = "translateY(25px)";
+    setTimeout(() => { f.style.display = "none"; }, 300);
+  } catch(err) {
+    alert("Błąd zapisu: " + err.message);
+  }
+}
+
+miesiacSelect.addEventListener('change', pobierzOpcje);
+document.getElementById("miasto").addEventListener('change', pobierzOpcje);
+
+generujNajblizszeMiesiace();
+pobierzOpcje();
 </script>
 </body>
 </html>
