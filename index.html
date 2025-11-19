@@ -1456,8 +1456,18 @@ function pobierzOpcje() {
   daty.forEach((data, index) => {
     const div = document.createElement("div");
     div.className = "opcja";
-    div.innerHTML = `<strong>Spotkanie ${index + 1}</strong><br>Data: ${data}<br><br>
-                     <button onclick="otworzFormularz('${miasto}','${data}')">Zapisz się</button><hr>`;
+
+    // Tworzymy button osobno i dodajemy event listener
+    const btn = document.createElement("button");
+    btn.textContent = "Zapisz się";
+    btn.addEventListener("click", () => {
+      otworzFormularz(miasto, data);
+    });
+
+    div.innerHTML = `<strong>Spotkanie ${index + 1}</strong><br>Data: ${data}<br><br>`;
+    div.appendChild(btn);
+    div.innerHTML += "<hr>";
+
     opcjeDiv.appendChild(div);
   });
 }
@@ -1518,5 +1528,6 @@ pobierzOpcje();
 </script>
 </body>
 </html>
+
 
 
