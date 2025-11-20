@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rezerwacja Tachograf</title>
-  <!-- <link rel="stylesheet" href="style.css">  -->
    <style> body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 20px;
@@ -119,11 +118,9 @@ footer{
     </style>
 
 <script type="module">
-  // Import Firebase
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
   import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
 
-  // Twoja konfiguracja
   const firebaseConfig = {
     apiKey: "AIzaSyCelCGEbx0cvExHrgGQHJlHLOtnejV9WbE",
     authDomain: "tachograf-fa8bd.firebaseapp.com",
@@ -134,11 +131,9 @@ footer{
     appId: "1:136245693098:web:d9cbf6411424612e981ed3"
   };
 
-  // Inicjalizacja Firebase
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // Funkcja wysyłania danych
   window.wyslijDaneFirebase = function(imie, nazwisko, email, telefon, miasto, data) {
     push(ref(db, 'zapisy/'), {
       Imie: imie,
@@ -276,5 +271,6 @@ async function wyslijDane() {
   </script>
 </body>
 </html>
+
 
 
