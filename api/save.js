@@ -7,7 +7,7 @@ const firebaseConfig = {
   databaseURL: process.env.FB_DB_URL,
   projectId: process.env.FB_PROJECT_ID,
   storageBucket: process.env.FB_STORAGE_BUCKET,
-  messagingSenderId: process.env.FB_SENDER_ID,
+  messagingSenderId: process.env.FB_MESSAGING_SENDER_ID,
   appId: process.env.FB_APP_ID
 };
 
@@ -21,6 +21,10 @@ export default async function handler(req, res) {
 
   const { imie, nazwisko, email, telefon, miasto, data } = req.body;
 
+  if (!imie || !nazwisko || !email || !telefon || !miasto || !data) {
+    return res.status(400).json({ error: "Brak wymaganych danych" });
+  }
+
   try {
     await push(ref(db, "zapisy/"), {
       Imie: imie,
@@ -32,7 +36,7 @@ export default async function handler(req, res) {
     });
 
     res.status(200).json({ success: true });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 }
