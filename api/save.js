@@ -11,7 +11,15 @@ const firebaseConfig = {
   appId: process.env.FB_APP_ID
 };
 
-const app = initializeApp(firebaseConfig);
+// Upewnij się, że Firebase nie inicjalizuje się wielokrotnie
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+} catch (err) {
+  // jeśli już zainicjalizowane, użyj istniejącej instancji
+  app = initializeApp(firebaseConfig);
+}
+
 const db = getDatabase(app);
 
 export default async function handler(req, res) {
@@ -19,24 +27,18 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { imie, nazwisko, email, telefon, miasto, data } = req.body;
-
-  if (!imie || !nazwisko || !email || !telefon || !miasto || !data) {
-    return res.status(400).json({ error: "Brak wymaganych danych" });
-  }
-
   try {
-    await push(ref(db, "zapisy/"), {
-      Imie: imie,
-      Nazwisko: nazwisko,
-      Email: email,
-      Telefon: telefon,
-      Miasto: miasto,
-      Data: data
-    });
+    const { imie, nazwisko, email, telefon, miasto, data } = req.body;
 
-    res.status(200).json({ success: true });
+    if (!imie || !nazwisko || !email || !telefon || !miasto || !data) {
+      return res.status(400).json({ error: "Brak wymaganych danych" });
+    }
+
+    await push(ref(db, "zapisy/"), { imie, nazwisko, email, telefon, miasto, data });
+
+    return res.status(200).json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Błąd Firebase:", err);
+    return res.status(500).json({ error: err.message });
   }
 }
