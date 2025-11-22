@@ -1,6 +1,6 @@
 import admin from "firebase-admin";
 
-if(!admin.apps.length){
+if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: process.env.FB_DB_URL
@@ -9,20 +9,23 @@ if(!admin.apps.length){
 
 const db = admin.database();
 
-export default async function handler(req, res){
-  if(req.method!=="POST") return res.status(405).json({error:"Method not allowed"});
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-  try{
+  try {
     const { imie, nazwisko, email, telefon, miasto, data } = req.body;
-    if(!imie || !nazwisko || !email || !telefon || !miasto || !data){
-      return res.status(400).json({error:"Brak wymaganych danych"});
+
+    if (!imie || !nazwisko || !email || !telefon || !miasto || !data) {
+      return res.status(400).json({ error: "Brak wymaganych danych" });
     }
 
     await db.ref("zapisy/").push({ imie, nazwisko, email, telefon, miasto, data });
-    return res.status(200).json({success:true});
+    return res.status(200).json({ success: true });
 
-  }catch(err){
+  } catch (err) {
     console.error("Firebase error:", err);
-    return res.status(500).json({error:err.message});
+    return res.status(500).json({ error: err.message });
   }
 }
