@@ -1,10 +1,20 @@
 import admin from "firebase-admin";
-import serviceAccount from "./serviceAccountKey.json" assert { type: "json" };
 
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://tachograf-fa8bd-default-rtdb.europe-west1.firebasedatabase.app"
+    credential: admin.credential.cert({
+      type: "service_account",
+      project_id: process.env.FIREBASE_PROJECT_ID,
+      private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+      private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+      client_email: process.env.FIREBASE_CLIENT_EMAIL,
+      client_id: process.env.FIREBASE_CLIENT_ID,
+      auth_uri: process.env.FIREBASE_AUTH_URI,
+      token_uri: process.env.FIREBASE_TOKEN_URI,
+      auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER,
+      client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT
+    }),
+    databaseURL: process.env.FIREBASE_DB_URL
   });
 }
 
@@ -16,20 +26,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { imie, nazwisko, email, telefon, miasto, data } = req.body;
-
-    if (!imie || !nazwisko || !email || !telefon || !miasto || !data) {
-      return res.status(400).json({ error: "Brak wymaganych danych" });
-    }
-
-    await db.ref("zapisy").push({
-      imie, nazwisko, email, telefon, miasto, data
-    });
-
-    return res.status(200).json({ success: true });
-
-  } catch (err) {
-    console.error("Firebase error:", err);
-    return res.status(500).json({ error: err.message });
+    await db.ref("zapisy").push({ ...req.body, createdAt: Date.now() });
+    res.status(200).json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 }
