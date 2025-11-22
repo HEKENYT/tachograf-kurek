@@ -1,94 +1,231 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zapisy – Tachograf</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rezerwacja Tachograf</title>
 
   <style>
+    /* --- TU NIC NIE ZMIENIAŁEM, TWÓJ ORYGINALNY CSS --- */
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 20px;
+      background: #1e1e1e;
+      color: #f0f0f0;
+    }
+
+    .header {
+      background: #222;
+      color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+      font-weight: bold;
     }
 
     .container {
-      max-width: 600px;
-      margin: 40px auto;
-      background: #fff;
+      max-width: 750px;
+      margin: auto;
+      background: #2e2e2e;
       padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #0002;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
     }
 
-    input, select, button {
+    select,
+    input {
       width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
+      padding: 14px;
+      margin: 12px 0;
+      border-radius: 8px;
+      border: 1px solid #777;
+      background: #3c3c3c;
+      color: #f9f9f9;
+    }
+
+    select:focus,
+    input:focus {
+      outline: none;
+      border-color: #00d4ff;
+      box-shadow: 0 0 10px #00d4ff;
+    }
+
+    .opcje {
+      margin-top: 25px;
+    }
+
+    .opcja {
+      background: #3b3b3b;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      transition: transform 0.3s ease, background 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      border-left: 4px solid #00d4ff;
+    }
+
+    .opcja:hover {
+      transform: translateX(5px);
+      background: #4a4a4a;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.6);
     }
 
     button {
-      background: #1976d2;
-      color: white;
+      padding: 14px 30px;
+      background: #00aaff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
-      transition: 0.2s;
+      width: 100%;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      transition: transform 0.2s ease, background 0.3s, box-shadow 0.3s;
     }
 
     button:hover {
-      background: #0d47a1;
+      transform: scale(1.05);
+      background: #00d4ff;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.7);
+    }
+
+    #formularz {
+      display: none;
+      margin-top: 25px;
+      background: #3a3a3a;
+      padding: 30px;
+      border-radius: 15px;
+      opacity: 0;
+      transform: translateY(25px);
+      transition: all 0.5s ease;
+      border-left: 4px solid #00d4ff;
+    }
+
+    .potwierdzenie {
+      margin-top: 25px;
+      font-weight: bold;
+      color: #00ffcc;
+    }
+
+    footer {
+      background-color: #222;
+      margin-top: 40px;
+      margin-left: -18px;
+      width: 160px;
+      text-align: center;
+      font-size: 10px;
+      border-radius: 15px;
+      float: left;
     }
   </style>
-</head>
 
+</head>
 <body>
+  <header class="header">
+    <h1>Szkolenia z obsługi tachografów cyfrowych wszystkich generacji oraz czasu pracy kierowców</h1>
+    <p style={{fontSize:"50px"}}>Trener kwalifikowany certyfikatem kompetencji Dagmara Kurek</p>
+    <p>Kontakt: +48 788 874 147 | Email: szkoleniaztacho@gmail.com</p>
+  </header>
 
   <div class="container">
-    <h2>Formularz zapisów</h2>
+    <h2>Rezerwacja Terminu Szkolenia – Wybierz Miesiąc i Lokalizację</h2>
 
-    <label>Imię:</label>
-    <input type="text" id="imie">
+    <label>Wybierz miesiąc:</label>
+    <select id="miesiac"></select>
 
-    <label>Nazwisko:</label>
-    <input type="text" id="nazwisko">
-
-    <label>Email:</label>
-    <input type="email" id="email">
-
-    <label>Telefon:</label>
-    <input type="text" id="telefon">
-
-    <label>Miasto:</label>
+    <label>Wybierz miasto:</label>
     <select id="miasto">
-      <option value="" disabled selected>Wybierz miasto</option>
-      <option value="Warszawa">Warszawa</option>
+      <option value="Oświęcim">Oświęcim</option>
+      <option value="Katowice">Katowice</option>
       <option value="Kraków">Kraków</option>
-      <option value="Poznań">Poznań</option>
     </select>
 
-    <label>Data:</label>
-    <input type="date" id="data">
+    <div class="opcje" id="opcje"></div>
 
-    <button onclick="wyslij()">Zapisz się</button>
+    <div id="formularz">
+      <h3>Podaj swoje dane</h3>
+      <input type="text" id="imie" placeholder="Imię">
+      <input type="text" id="nazwisko" placeholder="Nazwisko">
+      <input type="email" id="email" placeholder="Email">
+      <input type="tel" id="telefon" placeholder="Numer telefonu">
+      <button onclick="wyslijDane()">Wyślij</button>
+    </div>
+
+    <p id="potwierdzenie" class="potwierdzenie"></p>
   </div>
 
   <script>
-    async function wyslij() {
+    let wybraneMiasto = "";
+    let wybranaData = "";
+
+    const opcjeDiv = document.getElementById("opcje");
+    const miesiacSelect = document.getElementById("miesiac");
+
+    function generujNajblizszeMiesiace() {
+      const dzis = new Date();
+      for (let i = 0; i < 3; i++) {
+        const data = new Date(dzis.getFullYear(), dzis.getMonth() + i, 1);
+        const miesiac = data.toLocaleString('pl-PL', { month: 'long' });
+        const option = document.createElement("option");
+        option.value = `${data.getFullYear()}-${data.getMonth()+1}`;
+        option.textContent = miesiac.charAt(0).toUpperCase() + miesiac.slice(1) + " " + data.getFullYear();
+        miesiacSelect.appendChild(option);
+      }
+    }
+
+    function generujDaty(miesiac) {
+      const [rok, m] = miesiac.split('-').map(Number);
+      let daty = [];
+      for (let i = 1; i <= 4; i++) {
+        const d = new Date(rok, m - 1, i * 7);
+        daty.push(d.toISOString().split('T')[0]);
+      }
+      return daty;
+    }
+
+    function pobierzOpcje() {
+      const miasto = document.getElementById("miasto").value;
+      const miesiac = miesiacSelect.value;
+
+      opcjeDiv.innerHTML = "";
+      const daty = generujDaty(miesiac);
+
+      daty.forEach((data, index) => {
+        const div = document.createElement("div");
+        div.className = "opcja";
+        div.innerHTML = `<strong>Spotkanie ${index + 1}</strong><br>Data: ${data}<br><br>
+                         <button onclick="otworzFormularz('${miasto}','${data}')">Zapisz się</button><hr>`;
+        opcjeDiv.appendChild(div);
+      });
+    }
+
+    function otworzFormularz(miasto, data) {
+      wybraneMiasto = miasto;
+      wybranaData = data;
+      const f = document.getElementById("formularz");
+      f.style.display = "block";
+      setTimeout(() => {
+        f.style.opacity = "1";
+        f.style.transform = "translateY(0)";
+      }, 10);
+      f.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('potwierdzenie').innerText = "";
+    }
+
+    async function wyslijDane() {
       const imie = document.getElementById("imie").value;
       const nazwisko = document.getElementById("nazwisko").value;
       const email = document.getElementById("email").value;
       const telefon = document.getElementById("telefon").value;
-      const miasto = document.getElementById("miasto").value;
-      const data = document.getElementById("data").value;
 
-      if (!imie || !nazwisko || !email || !telefon || !miasto || !data) {
-        alert("Uzupełnij wszystkie pola!");
+      if (!imie || !nazwisko || !email || !telefon) {
+        alert("Wypełnij wszystkie pola!");
         return;
       }
 
+      // 🔥 Wysyłanie do backendu ZAMIAST Firebase w frontendzie
       const res = await fetch("/api/save", {
         method: "POST",
         headers: {
@@ -99,29 +236,33 @@
           nazwisko,
           email,
           telefon,
-          miasto,
-          data
+          miasto: wybraneMiasto,
+          data: wybranaData
         })
       });
 
       const out = await res.json();
 
-      if (out.success) {
-        alert("Zapisano pomyślnie!");
-      } else {
-        alert("Błąd serwera: " + out.error);
+      if (!out.success) {
+        alert("Błąd: " + out.error);
+        return;
       }
+
+      const f = document.getElementById("formularz");
+      f.style.opacity = "0";
+      f.style.transform = "translateY(25px)";
+      setTimeout(() => { f.style.display = "none"; }, 300);
+
+      document.getElementById('potwierdzenie').innerText =
+          `Zapis dokonany! ${imie} ${nazwisko}, spotkanie w ${wybraneMiasto} dnia ${wybranaData}.`;
     }
+
+    miesiacSelect.addEventListener('change', pobierzOpcje);
+    document.getElementById("miasto").addEventListener('change', pobierzOpcje);
+
+    generujNajblizszeMiesiace();
+    pobierzOpcje();
   </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
