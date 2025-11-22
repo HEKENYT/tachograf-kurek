@@ -6,7 +6,7 @@
   <title>Rezerwacja Tachograf</title>
 
   <style>
-    /* --- TU NIC NIE ZMIENIAŁEM, TWÓJ ORYGINALNY CSS --- */
+    /* --- TWÓJ ORYGINALNY CSS --- */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 20px;
@@ -120,7 +120,6 @@
       float: left;
     }
   </style>
-
 </head>
 <body>
   <header class="header">
@@ -225,36 +224,43 @@
         return;
       }
 
-      // 🔥 Wysyłanie do backendu ZAMIAST Firebase w frontendzie
-      const res = await fetch("/api/save", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          imie,
-          nazwisko,
-          email,
-          telefon,
-          miasto: wybraneMiasto,
-          data: wybranaData
-        })
-      });
+      try {
+        // 🔥 Debug fetch: najpierw pobierz text zamiast json
+        const res = await fetch("/api/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imie, nazwisko, email, telefon, miasto: wybraneMiasto, data: wybranaData })
+        });
 
-      const out = await res.json();
+        const text = await res.text();
+        console.log("Response z backendu:", text);
 
-      if (!out.success) {
-        alert("Błąd: " + out.error);
-        return;
-      }
+        let out;
+        try {
+          out = JSON.parse(text);
+        } catch(e) {
+          console.error("Nie można sparsować JSON:", e);
+          alert("Błąd serwera. Sprawdź konsolę.");
+          return;
+        }
 
-      const f = document.getElementById("formularz");
-      f.style.opacity = "0";
-      f.style.transform = "translateY(25px)";
-      setTimeout(() => { f.style.display = "none"; }, 300);
+        if (!out.success) {
+          alert("Błąd: " + out.error);
+          return;
+        }
 
-      document.getElementById('potwierdzenie').innerText =
+        const f = document.getElementById("formularz");
+        f.style.opacity = "0";
+        f.style.transform = "translateY(25px)";
+        setTimeout(() => { f.style.display = "none"; }, 300);
+
+        document.getElementById('potwierdzenie').innerText =
           `Zapis dokonany! ${imie} ${nazwisko}, spotkanie w ${wybraneMiasto} dnia ${wybranaData}.`;
+
+      } catch(err) {
+        console.error("Fetch error:", err);
+        alert("Błąd połączenia z serwerem. Sprawdź konsolę.");
+      }
     }
 
     miesiacSelect.addEventListener('change', pobierzOpcje);
