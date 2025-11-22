@@ -113,25 +113,43 @@ async function wyslijDane() {
   const email = document.getElementById("email").value;
   const telefon = document.getElementById("telefon").value;
 
-  if(!imie || !nazwisko || !email || !telefon) { alert("Wypełnij wszystkie pola!"); return; }
+  if (!imie || !nazwisko || !email || !telefon) { 
+    alert("Wypełnij wszystkie pola!"); 
+    return; 
+  }
 
   try {
     const res = await fetch("/api/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ imie, nazwisko, email, telefon, miasto: wybraneMiasto, data: wybranaData })
+      body: JSON.stringify({
+        imie,
+        nazwisko,
+        email,
+        telefon,
+        miasto: wybraneMiasto,
+        data: wybranaData
+      })
     });
+
     const out = await res.json();
-    if(!out.success) { alert("Błąd: "+out.error); return; }
+    if (!out.success) { 
+      alert("Błąd: " + out.error); 
+      return; 
+    }
 
     const f = document.getElementById("formularz");
-    f.style.opacity="0"; f.style.transform="translateY(25px)";
-    setTimeout(()=>{f.style.display="none";},300);
+    f.style.opacity = "0"; 
+    f.style.transform = "translateY(25px)";
+    setTimeout(() => { f.style.display = "none"; }, 300);
 
-    document.getElementById('potwierdzenie').innerText=
+    document.getElementById('potwierdzenie').innerText =
       `Zapis dokonany! ${imie} ${nazwisko}, spotkanie w ${wybraneMiasto} dnia ${wybranaData}.`;
 
-  } catch(err) { console.error("Fetch error:", err); alert("Błąd połączenia z serwerem."); }
+  } catch (err) { 
+    console.error("Fetch error:", err); 
+    alert("Błąd połączenia z serwerem."); 
+  }
 }
 
 miesiacSelect.addEventListener('change', pobierzOpcje);
@@ -142,4 +160,5 @@ pobierzOpcje();
 <footer>fsdijfdsi</footer>
 </body>
 </html>
+
 
