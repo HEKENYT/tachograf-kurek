@@ -1,6 +1,6 @@
 import admin from "firebase-admin";
 
-if (!admin.apps.length) { 
+if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: process.env.FB_DB_URL
