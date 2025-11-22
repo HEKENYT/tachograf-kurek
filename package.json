@@ -2,10 +2,6 @@
   "name": "tachograf-kurek",
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vercel dev",
-    "start": "vercel dev"
-  },
   "dependencies": {
     "firebase-admin": "^11.12.0"
   }
