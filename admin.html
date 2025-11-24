@@ -41,19 +41,24 @@ input {
 }
 button {
   background: #00aaff;
-  padding: 12px 20px;
+  padding: 8px 12px;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   color: white;
   font-weight: bold;
   cursor: pointer;
-  width: 100%;
 }
 button:hover {
   background: #00d4ff;
 }
 #panel {
   display: none;
+}
+.deleteBtn {
+  background: #ff4444;
+}
+.deleteBtn:hover {
+  background: #ff7777;
 }
 </style>
 </head>
@@ -80,6 +85,7 @@ button:hover {
         <th>Telefon</th>
         <th>Miasto</th>
         <th>Data</th>
+        <th>Usuń</th>
       </tr>
     </thead>
     <tbody id="tabela"></tbody>
@@ -90,10 +96,10 @@ button:hover {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// 🔥 Twój config Firebase
+// Twój config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCelCGEbx0cvExHrgGQHJlHLOtnejV9WbE",
   authDomain: "tachograf-fa8bd.firebaseapp.com",
@@ -125,16 +131,29 @@ window.login = async function () {
   }
 };
 
-// Pobieranie danych z Realtime Database
+// Pobieranie danych z Realtime Database i sortowanie po dacie
 function pobierzDane() {
   const tbody = document.getElementById("tabela");
   tbody.innerHTML = "";
 
   const rezerwacjeRef = ref(db, "zapisy");
   onValue(rezerwacjeRef, snapshot => {
-    tbody.innerHTML = "";
+    const dane = [];
     snapshot.forEach(child => {
       const d = child.val();
+      d.id = child.key; // dodajemy id do usuwania
+      dane.push(d);
+    });
+
+    // Sortowanie po dacie (najbliższe na górze)
+    dane.sort((a, b) => {
+      if (!a.data) return 1;
+      if (!b.data) return -1;
+      return new Date(a.data) - new Date(b.data);
+    });
+
+    tbody.innerHTML = "";
+    dane.forEach(d => {
       tbody.innerHTML += `
         <tr>
           <td>${d.imie || ""}</td>
@@ -143,10 +162,20 @@ function pobierzDane() {
           <td>${d.telefon || ""}</td>
           <td>${d.miasto || ""}</td>
           <td>${d.data || ""}</td>
+          <td><button class="deleteBtn" onclick="usun('${d.id}')">Usuń</button></td>
         </tr>
       `;
     });
   });
+}
+
+// Funkcja usuwania wpisu
+window.usun = function(id) {
+  if (confirm("Na pewno chcesz usunąć ten wpis?")) {
+    remove(ref(db, `zapisy/${id}`))
+      .then(() => alert("Wpis usunięty"))
+      .catch(err => alert("Błąd: " + err));
+  }
 }
 </script>
 </body>
