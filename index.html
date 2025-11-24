@@ -220,8 +220,11 @@ function generujDaty(miesiac) {
   // Dodajemy kolejne soboty w miesiącu
   while (d.getMonth() === m - 1) {
     if (d >= dzis) {
-      // W formacie YYYY-MM-DD
-      daty.push(d.toISOString().split('T')[0]);
+      // Formatujemy datę w YYYY-MM-DD lokalnie
+      const dzien = String(d.getDate()).padStart(2, '0');
+      const miesiacL = String(d.getMonth() + 1).padStart(2, '0');
+      const rokL = d.getFullYear();
+      daty.push(`${rokL}-${miesiacL}-${dzien}`);
     }
     d.setDate(d.getDate() + 7);
   }
@@ -374,6 +377,7 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
 
