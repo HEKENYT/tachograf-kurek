@@ -214,7 +214,7 @@ function generujDaty(miesiac) {
 
   // Szukamy pierwszej soboty
   while (d.getDay() !== 6) { // 6 = sobota
-    d.setDate(d.getDate() + 2);
+    d.setDate(d.getDate() + 1);
   }
 
   // Dodajemy kolejne soboty w miesiącu
@@ -374,6 +374,7 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
 
