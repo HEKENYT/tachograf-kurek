@@ -232,7 +232,6 @@ function pobierzOpcje() {
     return;
   }
 
-  // Najbliższa data
   const najblizsza = daty[0];
 
   daty.forEach((data, index) => {
@@ -256,6 +255,15 @@ function pobierzOpcje() {
 
     opcjeDiv.appendChild(div);
   });
+
+  document.querySelectorAll(".btn-zapis").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const miasto = btn.getAttribute("data-miasto");
+        const data = btn.getAttribute("data-data");
+        otworzFormularz(miasto, data);
+    });
+});
+  
 }
 
 
@@ -337,5 +345,6 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
