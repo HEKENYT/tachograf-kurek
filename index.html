@@ -207,14 +207,16 @@ function generujNajblizszeMiesiace() {
 function generujDaty(miesiac) {
   const [rok, m] = miesiac.split('-').map(Number);
   let daty = [];
-  const dzis = new Date();
 
-  for (let i = 1; i <= 4; i++) {
-    const d = new Date(rok, m - 1, i * 7);
+  let dzien = new Date(rok, m - 1, 1);
 
-    if (d >= dzis) {
-      daty.push(d.toISOString().split('T')[0]);
-    }
+  while (dzien.getDay() !== 6) {
+    dzien.setDate(dzien.getDate() + 1);
+  }
+
+  while (dzien.getMonth() === m - 1) {
+    daty.push(dzien.toISOString().split('T')[0]);
+    dzien.setDate(dzien.getDate() + 7); 
   }
 
   return daty;
@@ -365,6 +367,7 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
 
