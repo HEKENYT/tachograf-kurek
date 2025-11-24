@@ -228,77 +228,77 @@ function generujDaty(miesiac) {
   return daty;
 }
 
-// function pobierzOpcje() {
-//   const miasto = document.getElementById("miasto").value;
-//   const miesiac = miesiacSelect.value;
-//   opcjeDiv.innerHTML = "";
-
-//   const daty = generujDaty(miesiac);
-
-//   if (daty.length === 0) {
-//     opcjeDiv.innerHTML = "<p>Brak dostępnych terminów w tym miesiącu.</p>";
-//     return;
-//   }
-
-//   const najblizsza = daty[0];
-
-//   daty.forEach((data, index) => {
-//     const div = document.createElement("div");
-//     div.className = "opcja";
-
-//     if (data === najblizsza) {
-//       div.style.border = "2px solid #00ffcc";
-//       div.style.background = "#404040";
-//       div.style.transform = "scale(1.02)";
-//     }
-
-//     div.innerHTML = `
-//     <strong>Spotkanie ${index+1}</strong><br>
-//     Data: ${data}<br><br>
-//     <button class="btn-zapis" data-miasto="${miasto}" data-data="${data}">
-//         Zapisz się
-//     </button>
-//     <hr>
-// `;
-
-//     opcjeDiv.appendChild(div);
-//   });
-  
-async function pobierzOpcje() {
+function pobierzOpcje() {
   const miasto = document.getElementById("miasto").value;
   const miesiac = miesiacSelect.value;
   opcjeDiv.innerHTML = "";
 
-  try {
-    const res = await fetch(`/api/available-dates?miasto=${miasto}&miesiac=${miesiac}`);
-    const out = await res.json();
-    const daty = out.daty;
+  const daty = generujDaty(miesiac);
 
-    if (daty.length === 0) {
-      opcjeDiv.innerHTML = "<p>Brak dostępnych terminów w tym miesiącu.</p>";
-      return;
+  if (daty.length === 0) {
+    opcjeDiv.innerHTML = "<p>Brak dostępnych terminów w tym miesiącu.</p>";
+    return;
+  }
+
+  const najblizsza = daty[0];
+
+  daty.forEach((data, index) => {
+    const div = document.createElement("div");
+    div.className = "opcja";
+
+    if (data === najblizsza) {
+      div.style.border = "2px solid #00ffcc";
+      div.style.background = "#404040";
+      div.style.transform = "scale(1.02)";
     }
 
-    const najblizsza = daty[0];
+    div.innerHTML = `
+    <strong>Spotkanie ${index+1}</strong><br>
+    Data: ${data}<br><br>
+    <button class="btn-zapis" data-miasto="${miasto}" data-data="${data}">
+        Zapisz się
+    </button>
+    <hr>
+`;
 
-    daty.forEach((data, index) => {
-      const div = document.createElement("div");
-      div.className = "opcja";
-      if (data === najblizsza) {
-        div.style.border = "2px solid #00ffcc";
-        div.style.background = "#404040";
-        div.style.transform = "scale(1.02)";
-      }
-      div.innerHTML = `
-        <strong>Spotkanie ${index+1}</strong><br>
-        Data: ${data}<br><br>
-        <button class="btn-zapis" data-miasto="${miasto}" data-data="${data}">
-            Zapisz się
-        </button>
-        <hr>
-      `;
-      opcjeDiv.appendChild(div);
-    });
+    opcjeDiv.appendChild(div);
+  });
+  
+// async function pobierzOpcje() {
+//   const miasto = document.getElementById("miasto").value;
+//   const miesiac = miesiacSelect.value;
+//   opcjeDiv.innerHTML = "";
+
+//   try {
+//     const res = await fetch(`/api/available-dates?miasto=${miasto}&miesiac=${miesiac}`);
+//     const out = await res.json();
+//     const daty = out.daty;
+
+//     if (daty.length === 0) {
+//       opcjeDiv.innerHTML = "<p>Brak dostępnych terminów w tym miesiącu.</p>";
+//       return;
+//     }
+
+//     const najblizsza = daty[0];
+
+//     daty.forEach((data, index) => {
+//       const div = document.createElement("div");
+//       div.className = "opcja";
+//       if (data === najblizsza) {
+//         div.style.border = "2px solid #00ffcc";
+//         div.style.background = "#404040";
+//         div.style.transform = "scale(1.02)";
+//       }
+//       div.innerHTML = `
+//         <strong>Spotkanie ${index+1}</strong><br>
+//         Data: ${data}<br><br>
+//         <button class="btn-zapis" data-miasto="${miasto}" data-data="${data}">
+//             Zapisz się
+//         </button>
+//         <hr>
+//       `;
+//       opcjeDiv.appendChild(div);
+//     });
 
     document.querySelectorAll(".btn-zapis").forEach(btn => {
       btn.addEventListener("click", async () => {
@@ -419,6 +419,7 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
 
