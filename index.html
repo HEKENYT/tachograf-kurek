@@ -206,21 +206,26 @@ function generujNajblizszeMiesiace() {
 
 function generujDaty(miesiac) {
   const [rok, m] = miesiac.split('-').map(Number);
+
+  const pierwszyDzien = new Date(rok, m - 1, 1);
   const daty = [];
 
-  const firstDay = new Date(rok, m - 1, 1);
-  const lastDay = new Date(rok, m, 0);
+  // znajdź pierwszą sobotę w miesiącu
+  let d = new Date(pierwszyDzien);
 
-  // znajdz pierwszą sobotę w miesiącu
-  let d = new Date(firstDay);
-  while (d.getDay() !== 6) { // 6 = sobota
+  while (d.getDay() !== 6) {    // 6 = sobota
     d.setDate(d.getDate() + 1);
   }
 
-  // generuj wszystkie soboty w miesiącu
-  while (d <= lastDay) {
-    daty.push(d.toISOString().split('T')[0]);
-    d.setDate(d.getDate() + 7);
+  // dodaj maksymalnie 4 soboty
+  for (let i = 0; i < 4; i++) {
+    const sobota = new Date(d);
+    sobota.setDate(d.getDate() + i * 7);
+
+    // sprawdź czy wciąż ten sam miesiąc
+    if (sobota.getMonth() + 1 !== m) break;
+
+    daty.push(sobota.toISOString().split('T')[0]);
   }
 
   return daty;
@@ -371,6 +376,7 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
 
