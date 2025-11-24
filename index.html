@@ -207,14 +207,22 @@ async function wyslijDane() {
     f.style.transform = "translateY(25px)";
     setTimeout(() => { f.style.display = "none"; }, 300);
 
-    document.getElementById('potwierdzenie').innerText =
-      `Zapis dokonany! ${imie} ${nazwisko}, spotkanie w ${wybraneMiasto} dnia ${wybranaData}.`;
+    pokazPopup();
 
   } catch (err) { 
     console.error("Fetch error:", err); 
     alert("Błąd połączenia z serwerem."); 
   }
 }
+
+function pokazPopup() {
+  document.getElementById("popup").style.display = "flex";
+}
+
+function zamknijPopup() {
+  document.getElementById("popup").style.display = "none";
+}
+  
 miesiacSelect.addEventListener('change', pobierzOpcje);
 document.getElementById("miasto").addEventListener('change', pobierzOpcje);
 generujNajblizszeMiesiace();
@@ -229,6 +237,7 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
 
