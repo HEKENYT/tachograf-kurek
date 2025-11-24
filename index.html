@@ -52,6 +52,8 @@ footer { background-color: #222; margin-top: 40px; margin-left: -18px; width: 16
 </div>
 
 <p id="potwierdzenie" class="potwierdzenie"></p>
+
+
 </div>
 
 <script>
@@ -168,9 +170,16 @@ document.getElementById("miasto").addEventListener('change', pobierzOpcje);
 generujNajblizszeMiesiace();
 pobierzOpcje();
 </script>
-<footer>fsdijfdsi</footer>
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <h2>Dziękujemy za wysłanie formularza</h2>
+    <p>Odezwiemy się do Ciebie w ciągu około 48 godzin.</p>
+    <button onclick="zamknijPopup()">Zamknij</button>
+  </div>
+</div>
 </body>
 </html>
+
 
 
 
