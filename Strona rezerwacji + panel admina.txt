@@ -1,0 +1,46 @@
+1. Zakres funkcjonalności
+Strona użytkownika:
+
+Wybór miasta i miesiąca szkolenia
+
+Lista dostępnych terminów z podświetleniem najbliższego
+
+Formularz rezerwacji: imię, nazwisko, email, telefon
+
+Walidacja danych (telefon 9 cyfr, poprawny email)
+
+Popup z potwierdzeniem wysłania formularza
+
+Responsywny, nowoczesny design (ciemny motyw, hover, animacje)
+
+Panel admina:
+
+Logowanie administratora przez Firebase Auth
+
+Tabela z wszystkimi rezerwacjami z Firebase Realtime Database
+
+Sortowanie zapisów po dacie (najbliższe u góry)
+
+Przyciski „Usuń” dla każdego wpisu
+
+Dynamiczne odświeżanie danych
+
+Proste i intuicyjne UI dla administratora
+
+Backend / integracje:
+
+Firebase Realtime Database jako baza danych
+
+Firebase Authentication dla admina
+
+Hosting na Vercel lub innym serwerze statycznym
+
+Bezpieczeństwo: poprawne reguły Firebase, dostęp tylko po logowaniu
+
+2. Technologia
+
+HTML / CSS / JS (ES6 moduły)
+
+Firebase Realtime Database i Firebase Auth
+
+Vercel / hosting statyczny
