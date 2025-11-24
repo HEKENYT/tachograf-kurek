@@ -108,14 +108,29 @@ function otworzFormularz(miasto, data) {
 }
 
 async function wyslijDane() {
-  const imie = document.getElementById("imie").value;
-  const nazwisko = document.getElementById("nazwisko").value;
-  const email = document.getElementById("email").value;
-  const telefon = document.getElementById("telefon").value;
+  const imie = document.getElementById("imie").value.trim();
+  const nazwisko = document.getElementById("nazwisko").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const telefon = document.getElementById("telefon").value.trim();
 
+  // Walidacja pustych pól
   if (!imie || !nazwisko || !email || !telefon) { 
-    alert("Wypełnij wszystkie pola!"); 
-    return; 
+    alert("Wypełnij wszystkie pola!");
+    return;
+  }
+
+  // ---- WALIDACJA TELEFONU ----
+  const telRegex = /^[0-9]{9}$/;
+  if (!telRegex.test(telefon)) {
+    alert("Numer telefonu musi zawierać dokładnie 9 cyfr.");
+    return;
+  }
+
+  // ---- WALIDACJA EMAILA ----
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) {
+    alert("Wprowadź poprawny adres email!");
+    return;
   }
 
   try {
@@ -151,7 +166,6 @@ async function wyslijDane() {
     alert("Błąd połączenia z serwerem."); 
   }
 }
-
 miesiacSelect.addEventListener('change', pobierzOpcje);
 document.getElementById("miasto").addEventListener('change', pobierzOpcje);
 generujNajblizszeMiesiace();
@@ -160,5 +174,6 @@ pobierzOpcje();
 <footer>fsdijfdsi</footer>
 </body>
 </html>
+
 
 
