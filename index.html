@@ -345,15 +345,12 @@ function otworzFormularz(miasto, data) {
 
   const f = document.getElementById("formularz");
 
-  // Pokazanie formularza
   f.style.display = "block";
   setTimeout(() => {
     f.style.opacity = "1";
     f.style.transform = "translateY(0)";
   }, 10);
 
-  // *** TO JEST KLUCZ ***
-  // Przewinięcie do formularza
   f.scrollIntoView({ behavior: "smooth", block: "start" });
 
   document.getElementById("potwierdzenie").innerText = "";
@@ -373,6 +370,7 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
 
