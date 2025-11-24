@@ -246,11 +246,13 @@ function pobierzOpcje() {
     }
 
     div.innerHTML = `
-      <strong>Spotkanie ${index + 1}</strong><br>
-      Data: ${data}<br><br>
-      <button onclick="otworzFormularz('${miasto}','${data}')">Zapisz się</button>
-      <hr>
-    `;
+    <strong>Spotkanie ${index+1}</strong><br>
+    Data: ${data}<br><br>
+    <button class="btn-zapis" data-miasto="${miasto}" data-data="${data}">
+        Zapisz się
+    </button>
+    <hr>
+`;
 
     opcjeDiv.appendChild(div);
   });
@@ -335,4 +337,5 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
