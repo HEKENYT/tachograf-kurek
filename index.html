@@ -212,7 +212,6 @@ function generujDaty(miesiac) {
   for (let i = 1; i <= 4; i++) {
     const d = new Date(rok, m - 1, i * 7);
 
-    // pomijamy przeszłe daty
     if (d >= dzis) {
       daty.push(d.toISOString().split('T')[0]);
     }
@@ -367,6 +366,7 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
 
