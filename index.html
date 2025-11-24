@@ -330,6 +330,26 @@ function pokazPopup() {
 function zamknijPopup() {
   document.getElementById("popup").style.display = "none";
 }
+
+function otworzFormularz(miasto, data) {
+  wybraneMiasto = miasto;
+  wybranaData = data;
+
+  const f = document.getElementById("formularz");
+
+  // Pokazanie formularza
+  f.style.display = "block";
+  setTimeout(() => {
+    f.style.opacity = "1";
+    f.style.transform = "translateY(0)";
+  }, 10);
+
+  // *** TO JEST KLUCZ ***
+  // Przewinięcie do formularza
+  f.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  document.getElementById("potwierdzenie").innerText = "";
+}
   
 miesiacSelect.addEventListener('change', pobierzOpcje);
 document.getElementById("miasto").addEventListener('change', pobierzOpcje);
@@ -345,6 +365,7 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
 
