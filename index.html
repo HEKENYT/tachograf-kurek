@@ -217,15 +217,17 @@ function generujDaty(miesiac) {
     d.setDate(d.getDate() + 1);
   }
 
-  // Dodajemy kolejne soboty
+  // Dodajemy kolejne soboty w miesiącu
   while (d.getMonth() === m - 1) {
-    if (d >= dzis) daty.push(d.toISOString().split('T')[0]);
+    if (d >= dzis) {
+      // W formacie YYYY-MM-DD
+      daty.push(d.toISOString().split('T')[0]);
+    }
     d.setDate(d.getDate() + 7);
   }
 
   return daty;
 }
-
 
 function pobierzOpcje() {
   const miasto = document.getElementById("miasto").value;
@@ -372,6 +374,7 @@ pobierzOpcje();
 </div>
 </body>
 </html>
+
 
 
 
