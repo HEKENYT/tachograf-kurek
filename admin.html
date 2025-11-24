@@ -70,7 +70,7 @@ button:hover {
 </div>
 
 <div id="panel">
-  <h2>Rezerwacje z Firestore</h2>
+  <h2>Rezerwacje z Firebase</h2>
   <table>
     <thead>
       <tr>
@@ -90,25 +90,26 @@ button:hover {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// 🔥 WSTAW SWOJE DANE FIREBASE:
+// 🔥 Twój config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCelCGEbx0cvExHrgGQHJlHLOtnejV9WbE",
   authDomain: "tachograf-fa8bd.firebaseapp.com",
   databaseURL: "https://tachograf-fa8bd-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "tachograf-fa8bd",
-  storageBucket: "tachograf-fa8bd.firebasestorage.app",
+  storageBucket: "tachograf-fa8bd.appspot.com",
   messagingSenderId: "136245693098",
   appId: "1:136245693098:web:d9cbf6411424612e981ed3",
   measurementId: "G-RQFRNY32GY"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getDatabase(app);
 const auth = getAuth(app);
 
+// Logowanie
 window.login = async function () {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
@@ -124,24 +125,27 @@ window.login = async function () {
   }
 };
 
-async function pobierzDane() {
+// Pobieranie danych z Realtime Database
+function pobierzDane() {
   const tbody = document.getElementById("tabela");
   tbody.innerHTML = "";
 
-  const snap = await getDocs(collection(db, "rezerwacje"));
-
-  snap.forEach(doc => {
-    const d = doc.data();
-    tbody.innerHTML += `
-      <tr>
-        <td>${d.imie}</td>
-        <td>${d.nazwisko}</td>
-        <td>${d.email}</td>
-        <td>${d.telefon}</td>
-        <td>${d.miasto}</td>
-        <td>${d.data}</td>
-      </tr>
-    `;
+  const rezerwacjeRef = ref(db, "zapisy");
+  onValue(rezerwacjeRef, snapshot => {
+    tbody.innerHTML = "";
+    snapshot.forEach(child => {
+      const d = child.val();
+      tbody.innerHTML += `
+        <tr>
+          <td>${d.imie || ""}</td>
+          <td>${d.nazwisko || ""}</td>
+          <td>${d.email || ""}</td>
+          <td>${d.telefon || ""}</td>
+          <td>${d.miasto || ""}</td>
+          <td>${d.data || ""}</td>
+        </tr>
+      `;
+    });
   });
 }
 </script>
