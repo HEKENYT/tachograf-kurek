@@ -206,30 +206,21 @@ function generujNajblizszeMiesiace() {
 
 function generujDaty(miesiac) {
   const [rok, m] = miesiac.split('-').map(Number);
+  let daty = [];
+  const dzis = new Date();
 
-  const pierwszyDzien = new Date(rok, m - 1, 1);
-  const daty = [];
+  for (let i = 1; i <= 4; i++) {
+    const d = new Date(rok, m - 1, i * 7);
 
-  // znajdź pierwszą sobotę w miesiącu
-  let d = new Date(pierwszyDzien);
-
-  while (d.getDay() !== 6) {    // 6 = sobota
-    d.setDate(d.getDate() + 1);
-  }
-
-  // dodaj maksymalnie 4 soboty
-  for (let i = 0; i < 4; i++) {
-    const sobota = new Date(d);
-    sobota.setDate(d.getDate() + i * 7);
-
-    // sprawdź czy wciąż ten sam miesiąc
-    if (sobota.getMonth() + 1 !== m) break;
-
-    daty.push(sobota.toISOString().split('T')[0]);
+    // pomijamy przeszłe daty
+    if (d >= dzis) {
+      daty.push(d.toISOString().split('T')[0]);
+    }
   }
 
   return daty;
 }
+
 
 function pobierzOpcje() {
   const miasto = document.getElementById("miasto").value;
